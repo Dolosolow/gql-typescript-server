@@ -3,6 +3,11 @@
   "version": "0.0.1",
   "description": "Awesome project developed with TypeORM.",
   "devDependencies": {
+    "@graphql-codegen/cli": "1.21.4",
+    "@graphql-codegen/typescript": "1.22.0",
+    "@graphql-codegen/typescript-document-nodes": "1.17.11",
+    "@graphql-codegen/typescript-resolvers": "1.19.1",
+    "@types/bcryptjs": "^2.4.2",
     "@types/node": "^15.0.1",
     "ts-node": "9.1.1",
     "ts-node-dev": "^1.1.6",
@@ -10,12 +15,15 @@
   },
   "dependencies": {
     "apollo-server": "^2.24.0",
+    "bcryptjs": "^2.4.3",
     "graphql": "^15.5.0",
+    "graphql-tools": "^7.0.4",
     "pg": "^8.4.0",
     "reflect-metadata": "^0.1.10",
     "typeorm": "0.2.32"
   },
   "scripts": {
-    "start": "tsnd --respawn src/index.ts"
+    "start": "tsnd --respawn src/index.ts",
+    "gen-schema": "graphql-codegen --config codegen.yml"
   }
 }

@@ -1,20 +1,13 @@
 import "reflect-metadata";
-const { ApolloServer, gql } = require("apollo-server");
+import { createConnection } from "typeorm";
+import { ApolloServer } from "apollo-server";
 
-const typeDefs = gql`
-  type Query {
-    hello(name: String): String!
-  }
-`;
+import schema from "./graphql/schema";
 
-const resolvers = {
-  Query: {
-    hello: (_: any, { name }: any) => `Hello ${name || "Universe"}`,
-  },
-};
+const server = new ApolloServer({ schema });
 
-const server = new ApolloServer({ typeDefs, resolvers });
-
-server.listen().then(({ url }: { url: string }) => {
-  console.log(`🚀  Server ready at ${url}`);
+createConnection().then(() => {
+  server.listen().then(({ url }: { url: string }) => {
+    console.log(`🚀  Server ready at ${url}`);
+  });
 });
