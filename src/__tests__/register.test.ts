@@ -4,7 +4,7 @@ import { Connection } from "typeorm";
 import { createTOConnection } from "../utils/createTOConnection";
 import { User } from "../entity/User";
 
-const host = "http://localhost:4000";
+const host = "http://localhost:4000/graphql";
 const email = "jochy07c@gmail.com";
 const password = "test123.";
 
