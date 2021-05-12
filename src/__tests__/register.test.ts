@@ -1,30 +1,38 @@
 import { request } from "graphql-request";
+import { Server } from "node:http";
 import { Connection } from "typeorm";
 
-import { createTOConnection } from "../utils/createTOConnection";
+import { startServer } from "../startServer";
 import { User } from "../entity/User";
 
-const host = "http://localhost:4000/graphql";
 const email = "jochy07c@gmail.com";
-const password = "test123.";
+const password = "test123!";
 
 const mutation = `
-  mutation {
-    register(email: "${email}", password: "${password}")
-  }
+mutation {
+  register(email: "${email}", password: "${password}") 
+}
 `;
 
-let connection: Connection;
+let app: Server;
+let host: string = "";
+let TOConnection: Connection;
 
 beforeAll(async () => {
-  connection = await createTOConnection();
+  const { connection, listener } = await startServer();
+  const { port } = listener.address() as any;
+
+  app = listener;
+  TOConnection = connection;
+  host = `http://127.0.0.1:${port}/graphql`;
 });
 
 afterAll(async () => {
-  await connection.close();
+  app.close();
+  await TOConnection.close();
 });
 
-test("Register user", async () => {
+test("Register User", async () => {
   const response = await request(host, mutation);
   expect(response).toEqual({ register: true });
 
