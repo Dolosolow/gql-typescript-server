@@ -1,6 +1,6 @@
 [
   {
-    "default": "development",
+    "name": "development",
     "type": "postgres",
     "host": "localhost",
     "port": 5432,
@@ -19,7 +19,7 @@
     }
   },
   {
-    "default": "test",
+    "name": "test",
     "type": "postgres",
     "host": "localhost",
     "port": 5432,

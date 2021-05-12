@@ -1,6 +1,7 @@
 import { request } from "graphql-request";
-import { Connection, createConnection } from "typeorm";
+import { Connection } from "typeorm";
 
+import { createTOConnection } from "../utils/createTOConnection";
 import { User } from "../entity/User";
 
 const host = "http://localhost:4000";
@@ -16,7 +17,7 @@ const mutation = `
 let connection: Connection;
 
 beforeAll(async () => {
-  connection = await createConnection();
+  connection = await createTOConnection();
 });
 
 afterAll(async () => {
