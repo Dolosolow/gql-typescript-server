@@ -1,15 +1,15 @@
 import bcrypt from "bcryptjs";
 
+import { createVerifyEmailLink } from "../../utils/createVerifyEmailLink";
 import { formatYupError } from "../../utils/formatYupError";
-import { registrationSchema } from "../../validations";
-import { Resolvers } from "src/types/schema";
-import { User } from "../../entity/User";
-
 import { messages } from "../../lang";
+import { registrationSchema } from "../../validations";
+import { Resolvers } from "../../types/schema";
+import { User } from "../../entity/User";
 
 export const authResolver: Resolvers = {
   Mutation: {
-    register: async (_, args) => {
+    register: async (_, args, { redis, url }) => {
       try {
         await registrationSchema.validate(args, { abortEarly: false });
       } catch (err) {
@@ -27,6 +27,9 @@ export const authResolver: Resolvers = {
       const user = User.create({ email, password: hashedPassword });
 
       await user.save();
+
+      await createVerifyEmailLink(url, user.id, redis);
+
       return null;
     },
   },

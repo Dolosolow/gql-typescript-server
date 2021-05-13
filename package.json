@@ -8,8 +8,10 @@
     "@graphql-codegen/typescript-document-nodes": "1.17.11",
     "@graphql-codegen/typescript-resolvers": "1.19.1",
     "@types/bcryptjs": "^2.4.2",
+    "@types/ioredis": "^4.26.3",
     "@types/jest": "^26.0.23",
     "@types/node": "^15.0.1",
+    "@types/uuid": "^8.3.0",
     "@types/yup": "^0.29.11",
     "jest": "^26.6.3",
     "ts-jest": "^26.5.5",
@@ -23,19 +25,16 @@
     "graphql": "^15.5.0",
     "graphql-request": "^3.4.0",
     "graphql-tools": "^7.0.4",
+    "ioredis": "^4.27.2",
     "pg": "^8.4.0",
     "reflect-metadata": "^0.1.10",
     "typeorm": "0.2.32",
+    "uuid": "^8.3.2",
     "yup": "^0.32.9"
   },
   "scripts": {
-    "test": "NODE_ENV=test jest",
+    "test": "NODE_ENV=test jest --detectOpenHandles",
     "start": "NODE_ENV=development tsnd --respawn src/index.ts",
     "gen-schema": "graphql-codegen --config codegen.yml"
-  },
-  "jest": {
-    "globals": {
-      "ts-jest": {}
-    }
   }
 }
