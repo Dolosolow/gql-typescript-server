@@ -1,9 +1,10 @@
-import { Connection } from "typeorm";
 import { request } from "graphql-request";
 import { Server } from "node:http";
+import { Connection } from "typeorm";
 
 import { startServer } from "../startServer";
 import { User } from "../entity/User";
+import { messages } from "../lang";
 
 const email = "jochy07c@gmail.com";
 const password = "test123!";
@@ -36,8 +37,8 @@ afterAll(async () => {
 });
 
 test("Register User", async () => {
-  const gqlResponse = await request(host, mutation(email, password));
-  expect(gqlResponse).toEqual({ register: null });
+  const newRegister = await request(host, mutation(email, password));
+  expect(newRegister).toEqual({ register: null });
 
   const users = await User.find({ where: { email } });
   expect(users).toHaveLength(1);
@@ -46,7 +47,46 @@ test("Register User", async () => {
   expect(user.email).toEqual(email);
   expect(user.password).not.toEqual(password);
 
-  const duplicateResponse = await request(host, mutation(email, password));
-  expect(duplicateResponse.register).toHaveLength(1);
-  expect(duplicateResponse.register[0].path).toEqual("email");
+  const duplicateEmail = await request(host, mutation(email, password));
+  expect(duplicateEmail.register).toHaveLength(1);
+  expect(duplicateEmail.register[0]).toEqual({
+    path: "email",
+    message: messages.register.duplicateEmail,
+  });
+
+  const badEmail = await request(host, mutation("om", password));
+  expect(badEmail.register).toEqual([
+    {
+      path: "email",
+      message: messages.register.emailNotLongEnough,
+    },
+    {
+      path: "email",
+      message: messages.register.invalidEmail,
+    },
+  ]);
+
+  const badPassword = await request(host, mutation(email, "te"));
+  expect(badPassword.register).toEqual([
+    {
+      path: "password",
+      message: messages.register.passwordNotLongEnough,
+    },
+  ]);
+
+  const badEmailPassword = await request(host, mutation("cm", "te"));
+  expect(badEmailPassword.register).toEqual([
+    {
+      path: "email",
+      message: messages.register.emailNotLongEnough,
+    },
+    {
+      path: "email",
+      message: messages.register.invalidEmail,
+    },
+    {
+      path: "password",
+      message: messages.register.passwordNotLongEnough,
+    },
+  ]);
 });
