@@ -8,5 +8,5 @@ export class User extends BaseEntity {
 
   @Column("text") password: string;
 
-  @Column({ default: false }) confirmed: boolean;
+  @Column("boolean", { default: false }) confirmed: boolean;
 }
