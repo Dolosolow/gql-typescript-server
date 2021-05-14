@@ -10,6 +10,23 @@ import { sendConfirmationEmail } from "../../utils/sendEmail";
 
 export const authResolver: Resolvers = {
   Mutation: {
+    login: async (_, { email, password }) => {
+      const user = await User.findOne({ where: { email } });
+      if (!user) {
+        return [{ path: "email", message: messages.login.invalidCridentials }];
+      }
+
+      if (!user.confirmed) {
+        return [{ path: "email", message: messages.login.confirmBtn }];
+      }
+
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return [{ path: "email", message: messages.login.invalidCridentials }];
+      }
+
+      return null;
+    },
     register: async (_, args, { redis, url }) => {
       try {
         await registrationSchema.validate(args, { abortEarly: false });

@@ -23,7 +23,13 @@ export type Error = {
 
 export type Mutation = {
   __typename?: "Mutation";
+  login?: Maybe<Array<Error>>;
   register?: Maybe<Array<Error>>;
+};
+
+export type MutationLoginArgs = {
+  email: Scalars["String"];
+  password: Scalars["String"];
 };
 
 export type MutationRegisterArgs = {
@@ -162,6 +168,12 @@ export type MutationResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes["Mutation"] = ResolversParentTypes["Mutation"]
 > = {
+  login?: Resolver<
+    Maybe<Array<ResolversTypes["Error"]>>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationLoginArgs, "email" | "password">
+  >;
   register?: Resolver<
     Maybe<Array<ResolversTypes["Error"]>>,
     ParentType,
@@ -181,8 +193,14 @@ export type QueryResolvers<
     RequireFields<QueryHelloArgs, never>
   >;
 };
-
-export type Resolvers<ContextType = { redis: Redis; url: string }> = {
+/**
+ * @override
+ * If you would like stricted typed context for your resolvers add the types below.
+ * You will have to repeat this whenever you have to run the script 'gen-schema'. As it generates a new file.
+ * @example
+ * Resolvers<ContextType = { url: string, redis: Redis }> = {}
+ */
+export type Resolvers<ContextType = { url: string; redis: Redis }> = {
   Error?: ErrorResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
