@@ -4,7 +4,7 @@ import express from "express";
 import { createTOConnection } from "./utils/createTOConnection";
 import schema from "./graphql/schema";
 import { redis } from "./utils/redisConfig";
-import authRoutes from "./routes/auth";
+import restRoutes from "./routes/rest";
 
 export const startServer = async () => {
   const server = new ApolloServer({
@@ -21,7 +21,7 @@ export const startServer = async () => {
   const app = express();
   server.applyMiddleware({ app });
 
-  app.use("/", authRoutes);
+  app.use("/", restRoutes);
 
   app.get("/", (_, res) => {
     res.send("hello it works");

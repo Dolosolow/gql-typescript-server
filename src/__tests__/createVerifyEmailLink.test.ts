@@ -29,10 +29,4 @@ describe("ƒ: createVerifyEmailLink", () => {
     const value = await redis.get(key);
     expect(value).toBeNull();
   });
-
-  test("should return 'invalid' because of bad/expired id being sent", async () => {
-    const response = await fetch(`${process.env.TEST_HOST}/confirm/123u12413`);
-    const text = await response.text();
-    expect(text).toEqual("invalid");
-  });
 });
