@@ -3,7 +3,7 @@ import fetch from "node-fetch";
 import { createTOConnection } from "../utils/createTOConnection";
 import { createVerifyEmailLink } from "../utils/createVerifyEmailLink";
 import { User } from "../entity/User";
-import redis from "../utils/redisConfig";
+import { redis } from "../utils/redisConfig";
 
 let userId: string;
 

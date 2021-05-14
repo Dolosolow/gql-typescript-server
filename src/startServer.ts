@@ -3,7 +3,7 @@ import express from "express";
 
 import { createTOConnection } from "./utils/createTOConnection";
 import schema from "./graphql/schema";
-import redis from "./utils/redisConfig";
+import { redis } from "./utils/redisConfig";
 import authRoutes from "./routes/auth";
 
 export const startServer = async () => {

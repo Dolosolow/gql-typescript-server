@@ -1,7 +1,7 @@
 import { Router } from "express";
 
 import { User } from "../entity/User";
-import redis from "../utils/redisConfig";
+import { redis } from "../utils/redisConfig";
 
 const router = Router();
 
