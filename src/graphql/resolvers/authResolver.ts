@@ -6,6 +6,7 @@ import { messages } from "../../lang";
 import { registrationSchema } from "../../validations";
 import { Resolvers } from "../../types/schema";
 import { User } from "../../entity/User";
+import { sendConfirmationEmail } from "../../utils/sendEmail";
 
 export const authResolver: Resolvers = {
   Mutation: {
@@ -28,7 +29,9 @@ export const authResolver: Resolvers = {
 
       await user.save();
 
-      await createVerifyEmailLink(url, user.id, redis);
+      if (process.env.NODE_ENV !== "test") {
+        await sendConfirmationEmail(user.email, await createVerifyEmailLink(url, user.id, redis));
+      }
 
       return null;
     },

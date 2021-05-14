@@ -5,4 +5,8 @@ export const messages = {
     invalidEmail: "Email enter is not a valid email.",
     passwordNotLongEnough: "Password must be at least 3 characters.",
   },
+  email: {
+    confirmEmailSubject: "Welcome, you're almost done. Verify your email address.",
+    confirmBtn: "Confirm Email",
+  },
 };
