@@ -12,7 +12,8 @@ export const initializeSetup = async () => {
 
   server = listener;
   TOConnection = connection;
-  process.env.TEST_HOST = `http://127.0.0.1:${port}/graphql`;
+  process.env.TEST_GQL_HOST = `http://127.0.0.1:${port}/graphql`;
+  process.env.TEST_HOST = `http://127.0.0.1:${port}`;
 };
 
 export const closeSetup = async () => {

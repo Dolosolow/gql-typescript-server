@@ -29,7 +29,10 @@ afterAll(async () => {
 
 describe("Register User", () => {
   test("check for duplicate emails", async () => {
-    const newRegister = await request(process.env.TEST_HOST as string, mutation(email, password));
+    const newRegister = await request(
+      process.env.TEST_GQL_HOST as string,
+      mutation(email, password)
+    );
     expect(newRegister).toEqual({ register: null });
 
     const users = await User.find({ where: { email } });
@@ -40,7 +43,7 @@ describe("Register User", () => {
     expect(user.password).not.toEqual(password);
 
     const duplicateEmail = await request(
-      process.env.TEST_HOST as string,
+      process.env.TEST_GQL_HOST as string,
       mutation(email, password)
     );
     expect(duplicateEmail.register).toHaveLength(1);
@@ -51,7 +54,7 @@ describe("Register User", () => {
   });
 
   test("check for bad email", async () => {
-    const badEmail = await request(process.env.TEST_HOST as string, mutation("om", password));
+    const badEmail = await request(process.env.TEST_GQL_HOST as string, mutation("om", password));
     expect(badEmail.register).toEqual([
       {
         path: "email",
@@ -65,7 +68,7 @@ describe("Register User", () => {
   });
 
   test("check for bad password", async () => {
-    const badPassword = await request(process.env.TEST_HOST as string, mutation(email, "te"));
+    const badPassword = await request(process.env.TEST_GQL_HOST as string, mutation(email, "te"));
     expect(badPassword.register).toEqual([
       {
         path: "password",
@@ -75,7 +78,10 @@ describe("Register User", () => {
   });
 
   test("check for bad email+password", async () => {
-    const badEmailPassword = await request(process.env.TEST_HOST as string, mutation("cm", "te"));
+    const badEmailPassword = await request(
+      process.env.TEST_GQL_HOST as string,
+      mutation("cm", "te")
+    );
     expect(badEmailPassword.register).toEqual([
       {
         path: "email",

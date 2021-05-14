@@ -23,17 +23,21 @@ export const startServer = async () => {
   const app = express();
   server.applyMiddleware({ app });
 
-  app.use("/confirm/:id", async (req, res) => {
+  app.get("/confirm/:id", async (req, res) => {
     const { id } = req.params;
     const userId = await redis.get(id);
 
     if (userId) {
       await User.update({ id: userId }, { confirmed: true });
+      await redis.del(id);
+      res.send("ok");
     } else {
       res.send("invalid");
     }
+  });
 
-    res.send("ok email confirmed");
+  app.get("/", (_, res) => {
+    res.send("hello it works");
   });
 
   const listener = app.listen({ port: 4000 }, () => {
