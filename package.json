@@ -1,5 +1,6 @@
 {
   "name": "gql-typescript-server",
+  "license": "MIT",
   "version": "0.0.1",
   "description": "Awesome project developed with TypeORM.",
   "devDependencies": {
@@ -26,6 +27,7 @@
     "graphql-request": "^3.4.0",
     "graphql-tools": "^7.0.4",
     "ioredis": "^4.27.2",
+    "node-fetch": "^2.6.1",
     "pg": "^8.4.0",
     "reflect-metadata": "^0.1.10",
     "typeorm": "0.2.32",
@@ -33,7 +35,7 @@
     "yup": "^0.32.9"
   },
   "scripts": {
-    "test": "NODE_ENV=test jest --detectOpenHandles",
+    "test": "NODE_ENV=test jest --detectOpenHandles --watch",
     "start": "NODE_ENV=development tsnd --respawn src/index.ts",
     "gen-schema": "graphql-codegen --config codegen.yml"
   }

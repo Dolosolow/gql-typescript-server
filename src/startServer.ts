@@ -1,14 +1,12 @@
 import { ApolloServer } from "apollo-server-express";
 import express from "express";
-import Redis from "ioredis";
 
 import { createTOConnection } from "./utils/createTOConnection";
 import schema from "./graphql/schema";
-
-import { User } from "./entity/User";
+import redis from "./utils/redisConfig";
+import authRoutes from "./routes/auth";
 
 export const startServer = async () => {
-  const redis = new Redis();
   const server = new ApolloServer({
     schema,
     context: ({ req }) => ({
@@ -23,18 +21,7 @@ export const startServer = async () => {
   const app = express();
   server.applyMiddleware({ app });
 
-  app.get("/confirm/:id", async (req, res) => {
-    const { id } = req.params;
-    const userId = await redis.get(id);
-
-    if (userId) {
-      await User.update({ id: userId }, { confirmed: true });
-      await redis.del(id);
-      res.send("ok");
-    } else {
-      res.send("invalid");
-    }
-  });
+  app.use("/", authRoutes);
 
   app.get("/", (_, res) => {
     res.send("hello it works");

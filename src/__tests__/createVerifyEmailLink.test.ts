@@ -1,9 +1,9 @@
-import Redis from "ioredis";
 import fetch from "node-fetch";
 
 import { createTOConnection } from "../utils/createTOConnection";
 import { createVerifyEmailLink } from "../utils/createVerifyEmailLink";
 import { User } from "../entity/User";
+import redis from "../utils/redisConfig";
 
 let userId: string;
 
@@ -16,8 +16,6 @@ beforeAll(async () => {
 
 describe("ƒ: createVerifyEmailLink", () => {
   test("should create link, confirm user & delete key from redis", async () => {
-    const redis = new Redis();
-
     const url = await createVerifyEmailLink(process.env.TEST_HOST as string, userId, redis);
     const response = await fetch(url);
     const text = await response.text();
