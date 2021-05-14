@@ -1,4 +1,5 @@
 import { GraphQLResolveInfo } from "graphql";
+import { Request } from "apollo-server-express";
 import { Redis } from "ioredis";
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -200,7 +201,7 @@ export type QueryResolvers<
  * @example
  * Resolvers<ContextType = { url: string, redis: Redis }> = {}
  */
-export type Resolvers<ContextType = { url: string; redis: Redis }> = {
+export type Resolvers<ContextType = { url: string; redis: Redis; req: Request }> = {
   Error?: ErrorResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
