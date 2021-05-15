@@ -10,7 +10,7 @@ import { sendConfirmationEmail } from "../../utils/sendEmail";
 
 export const authResolver: Resolvers = {
   Mutation: {
-    login: async (_, { email, password }) => {
+    login: async (_, { email, password }, { req }) => {
       const user = await User.findOne({ where: { email } });
       if (!user) {
         return [{ path: "email", message: messages.login.invalidCridentials }];
@@ -24,6 +24,8 @@ export const authResolver: Resolvers = {
       if (!isMatch) {
         return [{ path: "email", message: messages.login.invalidCridentials }];
       }
+
+      req.session.userId = user.id;
 
       return null;
     },

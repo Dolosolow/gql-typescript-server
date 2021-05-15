@@ -1,3 +1,4 @@
+import session, { Session } from "express-session";
 import { GraphQLResolveInfo } from "graphql";
 import { Redis } from "ioredis";
 export type Maybe<T> = T | null;
@@ -39,11 +40,18 @@ export type MutationRegisterArgs = {
 
 export type Query = {
   __typename?: "Query";
+  user?: Maybe<User>;
   hello: Scalars["String"];
 };
 
 export type QueryHelloArgs = {
   name?: Maybe<Scalars["String"]>;
+};
+
+export type User = {
+  __typename?: "User";
+  id: Scalars["ID"];
+  email: Scalars["String"];
 };
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
@@ -143,6 +151,8 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars["String"]>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
+  User: ResolverTypeWrapper<User>;
+  ID: ResolverTypeWrapper<Scalars["ID"]>;
   Boolean: ResolverTypeWrapper<Scalars["Boolean"]>;
 };
 
@@ -152,6 +162,8 @@ export type ResolversParentTypes = {
   String: Scalars["String"];
   Mutation: {};
   Query: {};
+  User: User;
+  ID: Scalars["ID"];
   Boolean: Scalars["Boolean"];
 };
 
@@ -186,6 +198,7 @@ export type QueryResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes["Query"] = ResolversParentTypes["Query"]
 > = {
+  user?: Resolver<Maybe<ResolversTypes["User"]>, ParentType, ContextType>;
   hello?: Resolver<
     ResolversTypes["String"],
     ParentType,
@@ -193,17 +206,21 @@ export type QueryResolvers<
     RequireFields<QueryHelloArgs, never>
   >;
 };
-/**
- * @override
- * If you would like stricted typed context for your resolvers add the types below.
- * You will have to repeat this whenever you have to run the script 'gen-schema'. As it generates a new file.
- * @example
- * Resolvers<ContextType = { url: string, redis: Redis }> = {}
- */
+
+export type UserResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes["User"] = ResolversParentTypes["User"]
+> = {
+  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
+  email?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type Resolvers<ContextType = { url: string; redis: Redis; req: Express.Request }> = {
   Error?: ErrorResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  User?: UserResolvers<ContextType>;
 };
 
 /**

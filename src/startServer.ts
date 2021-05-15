@@ -8,13 +8,19 @@ import schema from "./graphql/schema";
 import { redis } from "./utils/redisConfig";
 import restRoutes from "./routes/rest";
 
+declare module "express-session" {
+  interface SessionData {
+    userId: string;
+  }
+}
+
 const RedisStore = connectRedis(session);
 
 export const startServer = async () => {
   const server = new ApolloServer({
     schema,
     context: ({ req }) => ({
-      req,
+      req: req,
       redis,
       url: req.protocol + "://" + req.get("host"),
     }),
@@ -24,15 +30,15 @@ export const startServer = async () => {
   await server.start();
 
   const app = express();
+
   const cors = {
     Credential: true,
-    origin: "http://localhost:3000",
+    origin: process.env.CLIENT_HOST,
   };
-  server.applyMiddleware({ app, cors });
 
   app.use(
     session({
-      store: new RedisStore({}),
+      store: new RedisStore({ client: redis }),
       name: "qid",
       secret: process.env.SESSION_SECRET as string,
       resave: false,
@@ -46,6 +52,8 @@ export const startServer = async () => {
   );
 
   app.use("/", restRoutes);
+
+  server.applyMiddleware({ app, cors });
 
   const listener = app.listen({ port: 4000 }, () => {
     console.log(`🚀  Server ready at http://localhost:4000${server.graphqlPath}`);
