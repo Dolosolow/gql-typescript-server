@@ -7,6 +7,7 @@ import connectRedis from "connect-redis";
 
 import { createTOConnection } from "./utils/createTOConnection";
 import { schemaWithMiddleware } from "./graphql/schema";
+import { redisPrefix } from "./constants";
 import { redis } from "./utils/redisConfig";
 import restRoutes from "./routes/rest";
 
@@ -40,7 +41,7 @@ export const startServer = async () => {
 
   app.use(
     session({
-      store: new RedisStore({ client: redis }),
+      store: new RedisStore({ client: redis, prefix: redisPrefix }),
       name: "qid",
       secret: process.env.SESSION_SECRET as string,
       resave: false,
