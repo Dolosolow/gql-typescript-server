@@ -43,7 +43,7 @@
     "yup": "^0.32.9"
   },
   "scripts": {
-    "test": "NODE_ENV=test jest --detectOpenHandles --watch --runInBand",
+    "test": "NODE_ENV=test jest --watch --runInBand",
     "start": "NODE_ENV=development tsnd --respawn src/index.ts",
     "gen-schema": "graphql-codegen --config codegen.yml"
   }

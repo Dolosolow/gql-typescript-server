@@ -16,6 +16,12 @@ const loginMutation = (email: string, password: string) => `
   }
 `;
 
+const logoutMutation = () => `
+  mutation {
+    logout
+  }
+`;
+
 const userQuery = () => `
   query {
     user {
@@ -30,8 +36,7 @@ let connection: Connection;
 
 beforeAll(async () => {
   connection = await createTOConnection();
-  const user = User.create({ email, password, confirmed: true });
-  await user.save();
+  const user = await User.create({ email, password, confirmed: true }).save();
   userId = user.id;
 });
 
@@ -39,13 +44,8 @@ afterAll(async () => {
   await connection.close();
 });
 
-describe("User Query", () => {
-  test("should return null when no cookie is preset", async () => {
-    const response = await axios.post(process.env.TEST_GQL_HOST as string, { query: userQuery() });
-    expect(response.data.data).toEqual({ user: null });
-  });
-
-  test("should get current user", async () => {
+describe("Logout User", () => {
+  test("should destory session and log a user out", async () => {
     await axios.post(
       process.env.TEST_GQL_HOST as string,
       {
@@ -54,7 +54,7 @@ describe("User Query", () => {
       { withCredentials: true }
     );
 
-    const response = await axios.post(
+    const loginResponse = await axios.post(
       process.env.TEST_GQL_HOST as string,
       {
         query: userQuery(),
@@ -62,11 +62,27 @@ describe("User Query", () => {
       { withCredentials: true }
     );
 
-    expect(response.data.data).toEqual({
+    expect(loginResponse.data.data).toEqual({
       user: {
         id: userId,
         email,
       },
     });
+
+    await axios.post(
+      process.env.TEST_GQL_HOST as string,
+      {
+        query: logoutMutation(),
+      },
+      { withCredentials: true }
+    );
+
+    const logoutResponse = await axios.post(
+      process.env.TEST_GQL_HOST as string,
+      { query: userQuery() },
+      { withCredentials: true }
+    );
+
+    expect(logoutResponse.data.data).toEqual({ user: null });
   });
 });

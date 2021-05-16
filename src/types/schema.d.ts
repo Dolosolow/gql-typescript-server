@@ -1,4 +1,3 @@
-import session, { Session } from "express-session";
 import { GraphQLResolveInfo } from "graphql";
 import { Redis } from "ioredis";
 export type Maybe<T> = T | null;
@@ -24,6 +23,7 @@ export type Error = {
 
 export type Mutation = {
   __typename?: "Mutation";
+  logout?: Maybe<Scalars["Boolean"]>;
   login?: Maybe<Array<Error>>;
   register?: Maybe<Array<Error>>;
 };
@@ -150,10 +150,10 @@ export type ResolversTypes = {
   Error: ResolverTypeWrapper<Error>;
   String: ResolverTypeWrapper<Scalars["String"]>;
   Mutation: ResolverTypeWrapper<{}>;
+  Boolean: ResolverTypeWrapper<Scalars["Boolean"]>;
   Query: ResolverTypeWrapper<{}>;
   User: ResolverTypeWrapper<User>;
   ID: ResolverTypeWrapper<Scalars["ID"]>;
-  Boolean: ResolverTypeWrapper<Scalars["Boolean"]>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -161,10 +161,10 @@ export type ResolversParentTypes = {
   Error: Error;
   String: Scalars["String"];
   Mutation: {};
+  Boolean: Scalars["Boolean"];
   Query: {};
   User: User;
   ID: Scalars["ID"];
-  Boolean: Scalars["Boolean"];
 };
 
 export type ErrorResolvers<
@@ -180,6 +180,7 @@ export type MutationResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes["Mutation"] = ResolversParentTypes["Mutation"]
 > = {
+  logout?: Resolver<Maybe<ResolversTypes["Boolean"]>, ParentType, ContextType>;
   login?: Resolver<
     Maybe<Array<ResolversTypes["Error"]>>,
     ParentType,

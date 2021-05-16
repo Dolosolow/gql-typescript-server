@@ -8,8 +8,7 @@ const addDataToContext = async (
   context: { url: string; redis: Redis; req: Express.Request },
   info: any
 ) => {
-  const result = await resolver(parent, args, context, info);
-  return result;
+  return await resolver(parent, args, context, info);
 };
 
 export const AuthMiddleware = {

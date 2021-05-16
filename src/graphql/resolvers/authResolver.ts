@@ -10,12 +10,20 @@ import { sendConfirmationEmail } from "../../utils/sendEmail";
 
 export const authResolver: Resolvers = {
   Query: {
-    user: async (_, __, { req }) => {
-      const user = await User.findOne({ where: { id: req.session.userId } });
+    user: async (_, __, { req: { session } }) => {
+      const user = await User.findOne({ where: { id: session.userId } });
       return user!;
     },
   },
   Mutation: {
+    logout: async (_, __, { req: { session } }) => {
+      return new Promise((resolve) => {
+        session.destroy((err) => {
+          if (err) console.log("logout error: ", err);
+          resolve(true);
+        });
+      });
+    },
     login: async (_, { email, password }, { req }) => {
       const user = await User.findOne({ where: { email } });
       if (!user) {

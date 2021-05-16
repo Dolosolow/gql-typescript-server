@@ -11,6 +11,7 @@ export const authType = gql`
   }
 
   type Mutation {
+    logout: Boolean
     login(email: String!, password: String!): [Error!]
     register(email: String!, password: String!): [Error!]
   }
