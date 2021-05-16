@@ -9,6 +9,12 @@ import { User } from "../../entity/User";
 import { sendConfirmationEmail } from "../../utils/sendEmail";
 
 export const authResolver: Resolvers = {
+  Query: {
+    user: async (_, __, { req }) => {
+      const user = await User.findOne({ where: { id: req.session.userId } });
+      return user!;
+    },
+  },
   Mutation: {
     login: async (_, { email, password }, { req }) => {
       const user = await User.findOne({ where: { email } });
@@ -43,9 +49,7 @@ export const authResolver: Resolvers = {
         return [{ path: "email", message: messages.register.duplicateEmail }];
       }
 
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const user = User.create({ email, password: hashedPassword });
-
+      const user = User.create({ email, password });
       await user.save();
 
       if (process.env.NODE_ENV !== "test") {
