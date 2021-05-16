@@ -1,38 +1,24 @@
-import { request } from "graphql-request";
 import { Connection } from "typeorm";
 
 import { createTOConnection } from "../utils/createTOConnection";
-import { User } from "../entity/User";
 import { messages } from "../lang";
+import { TestClient } from "../utils/TestClient";
+import { User } from "../entity/User";
 
 const email = "jochy07c@gmail.com";
 const password = "test123!";
 
-const registerMutation = (email: string, password: string) => `
-  mutation {
-    register(email: "${email}", password: "${password}") {
-      path
-      message
-    }
-  }
-`;
+const loginError = async (
+  testClient: TestClient,
+  email: string,
+  password: string,
+  errorMsg: string
+) => {
+  const loginUser = await testClient.login(email, password);
 
-const loginMutation = (email: string, password: string) => `
-  mutation {
-    login(email: "${email}", password: "${password}") {
-      path
-      message
-    }
-  }
-`;
-
-const loginError = async (email: string, password: string, errorMsg: string) => {
-  const loginUser = await request(
-    process.env.TEST_GQL_HOST as string,
-    loginMutation(email, password)
-  );
-
-  expect(loginUser).toEqual({ login: [{ path: "email", message: errorMsg }] });
+  expect(loginUser.data.data).toEqual({
+    login: [{ path: "email", message: errorMsg }],
+  });
 };
 
 let connection: Connection;
@@ -47,21 +33,20 @@ afterAll(async () => {
 
 describe("Login User", () => {
   test("should return invalid credentials, no user", async () => {
-    await loginError(email, "asdalsdknasd", messages.login.invalidCridentials);
+    const testClient = new TestClient(process.env.TEST_GQL_HOST as string);
+    await loginError(testClient, email, password, messages.login.invalidCridentials);
   });
 
   test("should fail login user, email not confirmed + update user + login successful", async () => {
-    await request(process.env.TEST_GQL_HOST as string, registerMutation(email, password));
-    await loginError(email, password, messages.login.confirmBtn);
+    const testClient = new TestClient(process.env.TEST_GQL_HOST as string);
+
+    await testClient.register(email, password);
+    await loginError(testClient, email, password, messages.login.confirmBtn);
 
     await User.update({ email }, { confirmed: true });
+    await loginError(testClient, email, "asdasdasd", messages.login.invalidCridentials);
 
-    await loginError(email, "asdasdasd", messages.login.invalidCridentials);
-
-    const loginSuccess = await request(
-      process.env.TEST_GQL_HOST as string,
-      loginMutation(email, password)
-    );
-    expect(loginSuccess).toEqual({ login: null });
+    const loginSuccess = await testClient.login(email, password);
+    expect(loginSuccess.data.data).toEqual({ login: null });
   });
 });

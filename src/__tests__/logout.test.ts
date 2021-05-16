@@ -1,35 +1,11 @@
 import { Connection } from "typeorm";
-import axios from "axios";
 
 import { createTOConnection } from "../utils/createTOConnection";
+import { TestClient } from "../utils/TestClient";
 import { User } from "../entity/User";
 
 const email = "asiaferrer@gmail.com";
 const password = "jochy123";
-
-const loginMutation = (email: string, password: string) => `
-  mutation {
-    login(email: "${email}", password: "${password}") {
-      path
-      message
-    }
-  }
-`;
-
-const logoutMutation = () => `
-  mutation {
-    logout
-  }
-`;
-
-const userQuery = () => `
-  query {
-    user {
-      id
-      email
-    }
-  }
-`;
 
 let userId: string;
 let connection: Connection;
@@ -46,21 +22,10 @@ afterAll(async () => {
 
 describe("Logout User", () => {
   test("should destory session and log a user out", async () => {
-    await axios.post(
-      process.env.TEST_GQL_HOST as string,
-      {
-        query: loginMutation(email, password),
-      },
-      { withCredentials: true }
-    );
+    const testClient = new TestClient(process.env.TEST_GQL_HOST as string);
 
-    const loginResponse = await axios.post(
-      process.env.TEST_GQL_HOST as string,
-      {
-        query: userQuery(),
-      },
-      { withCredentials: true }
-    );
+    await testClient.login(email, password);
+    const loginResponse = await testClient.user();
 
     expect(loginResponse.data.data).toEqual({
       user: {
@@ -69,19 +34,8 @@ describe("Logout User", () => {
       },
     });
 
-    await axios.post(
-      process.env.TEST_GQL_HOST as string,
-      {
-        query: logoutMutation(),
-      },
-      { withCredentials: true }
-    );
-
-    const logoutResponse = await axios.post(
-      process.env.TEST_GQL_HOST as string,
-      { query: userQuery() },
-      { withCredentials: true }
-    );
+    await testClient.logout();
+    const logoutResponse = await testClient.user();
 
     expect(logoutResponse.data.data).toEqual({ user: null });
   });
