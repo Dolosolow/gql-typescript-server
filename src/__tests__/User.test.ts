@@ -40,9 +40,12 @@ afterAll(async () => {
 });
 
 describe("User Query", () => {
-  // test("should not get user if not logged in", async () => {
-  //   //   postpone
-  // });
+  test("should return null when no cookie is preset", async () => {
+    const response = await axios.post(process.env.TEST_GQL_HOST as string, {
+      query: userQuery(),
+    });
+    expect(response.data.data).toEqual({ user: null });
+  });
 
   test("should get current user", async () => {
     await axios.post(
