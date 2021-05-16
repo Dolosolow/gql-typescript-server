@@ -11,8 +11,10 @@ export const authType = gql`
   }
 
   type Mutation {
+    changeForgottenPassword(newPassword: String!, key: String!): [Error!]
     logout: Boolean
     login(email: String!, password: String!): [Error!]
     register(email: String!, password: String!): [Error!]
+    sendForgotPasswordEmail(email: String!): Boolean
   }
 `;

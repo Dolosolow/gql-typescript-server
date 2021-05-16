@@ -23,9 +23,16 @@ export type Error = {
 
 export type Mutation = {
   __typename?: "Mutation";
+  changeForgottenPassword?: Maybe<Array<Error>>;
   logout?: Maybe<Scalars["Boolean"]>;
   login?: Maybe<Array<Error>>;
   register?: Maybe<Array<Error>>;
+  sendForgotPasswordEmail?: Maybe<Scalars["Boolean"]>;
+};
+
+export type MutationChangeForgottenPasswordArgs = {
+  newPassword: Scalars["String"];
+  key: Scalars["String"];
 };
 
 export type MutationLoginArgs = {
@@ -36,6 +43,10 @@ export type MutationLoginArgs = {
 export type MutationRegisterArgs = {
   email: Scalars["String"];
   password: Scalars["String"];
+};
+
+export type MutationSendForgotPasswordEmailArgs = {
+  email: Scalars["String"];
 };
 
 export type Query = {
@@ -180,6 +191,12 @@ export type MutationResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes["Mutation"] = ResolversParentTypes["Mutation"]
 > = {
+  changeForgottenPassword?: Resolver<
+    Maybe<Array<ResolversTypes["Error"]>>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationChangeForgottenPasswordArgs, "newPassword" | "key">
+  >;
   logout?: Resolver<Maybe<ResolversTypes["Boolean"]>, ParentType, ContextType>;
   login?: Resolver<
     Maybe<Array<ResolversTypes["Error"]>>,
@@ -192,6 +209,12 @@ export type MutationResolvers<
     ParentType,
     ContextType,
     RequireFields<MutationRegisterArgs, "email" | "password">
+  >;
+  sendForgotPasswordEmail?: Resolver<
+    Maybe<ResolversTypes["Boolean"]>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationSendForgotPasswordEmailArgs, "email">
   >;
 };
 
