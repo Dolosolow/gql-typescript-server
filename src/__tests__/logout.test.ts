@@ -21,7 +21,17 @@ afterAll(async () => {
 });
 
 describe("Logout User", () => {
-  test("should destory session and log a user out", async () => {
+  test("MULTIPLE SESSION:", async () => {
+    const session1 = new TestClient(process.env.TEST_GQL_HOST as string);
+    const session2 = new TestClient(process.env.TEST_GQL_HOST as string);
+
+    await session1.login(email, password);
+    await session2.login(email, password);
+
+    expect(await (await session1.user()).data).toEqual(await await (await session2.user()).data);
+  });
+
+  test("SINGLE SESSION: should destory session and log a user out", async () => {
     const testClient = new TestClient(process.env.TEST_GQL_HOST as string);
 
     await testClient.login(email, password);

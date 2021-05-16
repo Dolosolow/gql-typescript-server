@@ -1,5 +1,3 @@
-import { request } from "graphql-request";
-
 import { Connection } from "typeorm";
 import { createTOConnection } from "../utils/createTOConnection";
 import { messages } from "../lang";
@@ -24,11 +22,9 @@ describe("Register User", () => {
     const testClient = new TestClient(process.env.TEST_GQL_HOST as string);
 
     const newRegister = await testClient.register(email, password);
-
     expect(newRegister.data.data).toEqual({ register: null });
 
     const users = await User.find({ where: { email } });
-
     expect(users).toHaveLength(1);
 
     const user = users[0];
@@ -36,7 +32,6 @@ describe("Register User", () => {
     expect(user.password).not.toEqual(password);
 
     const duplicateEmail = await testClient.register(email, password);
-
     expect(duplicateEmail.data.data.register).toHaveLength(1);
     expect(duplicateEmail.data.data.register[0]).toEqual({
       path: "email",
@@ -48,7 +43,6 @@ describe("Register User", () => {
     const testClient = new TestClient(process.env.TEST_GQL_HOST as string);
 
     const badEmail = await testClient.register("om", password);
-
     expect(badEmail.data.data.register).toEqual([
       {
         path: "email",
@@ -65,7 +59,6 @@ describe("Register User", () => {
     const testClient = new TestClient(process.env.TEST_GQL_HOST as string);
 
     const badPassword = await testClient.register(email, "te");
-
     expect(badPassword.data.data.register).toEqual([
       {
         path: "password",
@@ -78,7 +71,6 @@ describe("Register User", () => {
     const testClient = new TestClient(process.env.TEST_GQL_HOST as string);
 
     const badEmailPassword = await testClient.register("cm", "te");
-
     expect(badEmailPassword.data.data.register).toEqual([
       {
         path: "email",

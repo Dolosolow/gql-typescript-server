@@ -6,6 +6,7 @@ import { messages } from "../../lang";
 import { registrationSchema } from "../../validations";
 import { Resolvers } from "../../types/schema";
 import { User } from "../../entity/User";
+import { redisPrefix, userSids } from "../../constants";
 import { sendConfirmationEmail } from "../../utils/sendEmail";
 
 export const authResolver: Resolvers = {
@@ -16,20 +17,27 @@ export const authResolver: Resolvers = {
     },
   },
   Mutation: {
-    logout: async (_, __, { req: { session } }) => {
-      return new Promise((resolve) => {
-        session.destroy((err) => {
-          if (err) console.log("logout error: ", err);
-          resolve(true);
-        });
-      });
+    logout: async (_, __, { req: { session }, redis }) => {
+      const { userId } = session;
+
+      if (userId) {
+        const sessionIds = await redis.lrange(`${userSids}${userId}`, 0, -1);
+
+        for (let i = 0; i < sessionIds.length; i++) {
+          await redis.del(`${sessionIds[i]}`);
+        }
+
+        return true;
+      }
+
+      return false;
     },
-    login: async (_, { email, password }, { req }) => {
+    login: async (_, { email, password }, { req, redis }) => {
       const user = await User.findOne({ where: { email } });
+
       if (!user) {
         return [{ path: "email", message: messages.login.invalidCridentials }];
       }
-
       if (!user.confirmed) {
         return [{ path: "email", message: messages.login.confirmBtn }];
       }
@@ -40,6 +48,7 @@ export const authResolver: Resolvers = {
       }
 
       req.session.userId = user.id;
+      await redis.lpush(`${userSids}${user.id}`, `${redisPrefix}${req.sessionID}`);
 
       return null;
     },
