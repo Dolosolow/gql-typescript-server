@@ -1,15 +1,17 @@
+import "reflect-metadata";
+import "dotenv/config";
 import { ApolloServer } from "apollo-server-express";
 import express from "express";
 import session from "express-session";
 import connectRedis from "connect-redis";
 
 import { createTOConnection } from "./utils/createTOConnection";
-import schema from "./graphql/schema";
+import { schemaWithMiddleware } from "./graphql/schema";
 import { redis } from "./utils/redisConfig";
 import restRoutes from "./routes/rest";
 
 declare module "express-session" {
-  interface SessionData {
+  interface Session {
     userId: string;
   }
 }
@@ -18,7 +20,7 @@ const RedisStore = connectRedis(session);
 
 export const startServer = async () => {
   const server = new ApolloServer({
-    schema,
+    schema: schemaWithMiddleware,
     context: ({ req }) => ({
       req: req,
       redis,
@@ -32,8 +34,8 @@ export const startServer = async () => {
   const app = express();
 
   const cors = {
-    Credential: true,
-    origin: process.env.CLIENT_HOST,
+    credentials: true,
+    origin: process.env.NODE_ENV === "test" ? "*" : process.env.CLIENT_HOST,
   };
 
   app.use(
