@@ -19,6 +19,23 @@ export class TestClient {
     };
   }
 
+  async changeForgottenPassword(newPassword: string, key: string) {
+    return axios.post(
+      this.url,
+      {
+        query: `
+        mutation {
+          changeForgottenPassword(newPassword: "${newPassword}", key: "${key}") {
+            path
+            message
+          }
+        }
+        `,
+      },
+      { ...this.options }
+    );
+  }
+
   async login(email: string, password: string) {
     return axios.post(
       this.url,

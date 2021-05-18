@@ -3,11 +3,15 @@ import bcrypt from "bcryptjs";
 import { createVerifyEmailLink } from "../../utils/createVerifyEmailLink";
 import { formatYupError } from "../../utils/formatYupError";
 import { messages } from "../../lang";
-import { registrationSchema } from "../../validations";
+import { passwordSchema, registrationSchema } from "../../validations";
 import { Resolvers } from "../../types/schema";
 import { User } from "../../entity/User";
-import { redisPrefix, userSids } from "../../constants";
 import { sendConfirmationEmail } from "../../utils/sendEmail";
+import { removeAllUserSessions } from "../../utils/removeAllUserSessions";
+import { forgotPwdLockAcct } from "../../utils/forgotPwdLockAcct";
+import { createForgotPasswordLink } from "../../utils/createForgotPwdLink";
+
+import { forgotPwdPrefix, redisPrefix, userSidsPrefix } from "../../constants";
 
 export const authResolver: Resolvers = {
   Query: {
@@ -17,19 +21,52 @@ export const authResolver: Resolvers = {
     },
   },
   Mutation: {
-    logout: async (_, __, { req: { session }, redis }) => {
-      const { userId } = session;
+    changeForgottenPassword: async (_, { key, newPassword }, { redis }) => {
+      const redisKey = `${forgotPwdPrefix}${key}`;
+      const userId = await redis.get(redisKey);
 
-      if (userId) {
-        const sessionIds = await redis.lrange(`${userSids}${userId}`, 0, -1);
-
-        for (let i = 0; i < sessionIds.length; i++) {
-          await redis.del(`${sessionIds[i]}`);
-        }
-
-        return true;
+      if (!userId) {
+        return [{ path: "key", message: messages.forgotPassword.expiredKey }];
       }
 
+      try {
+        await passwordSchema.validate({ newPassword }, { abortEarly: false });
+      } catch (err) {
+        return formatYupError(err);
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      const updatePromise = await User.update(
+        { id: userId },
+        { forgotPasswordLocked: false, password: hashedPassword }
+      );
+      const deleteKeyPromise = await redis.del(redisKey);
+
+      await Promise.all([updatePromise, deleteKeyPromise]);
+
+      return null;
+    },
+    sendForgotPasswordEmail: async (_, __, { redis, req }) => {
+      const { userId } = req.session;
+      /**
+       * @method forgotPwdLockAcct
+       * @todo add client-side url
+       */
+      await forgotPwdLockAcct(userId, redis);
+      /**
+       * @method createForgotPasswordLink
+       * @todo send email with url
+       */
+      await createForgotPasswordLink("", userId, redis);
+
+      return null;
+    },
+    logout: async (_, __, { req: { session }, redis }) => {
+      const { userId } = session;
+      if (userId) {
+        await removeAllUserSessions(userId, redis);
+        return true;
+      }
       return false;
     },
     login: async (_, { email, password }, { req, redis }) => {
@@ -38,8 +75,13 @@ export const authResolver: Resolvers = {
       if (!user) {
         return [{ path: "email", message: messages.login.invalidCridentials }];
       }
+
       if (!user.confirmed) {
         return [{ path: "email", message: messages.login.confirmBtn }];
+      }
+
+      if (user.forgotPasswordLocked) {
+        return [{ path: "email", message: messages.login.AcctLock }];
       }
 
       const isMatch = await bcrypt.compare(password, user.password);
@@ -48,7 +90,7 @@ export const authResolver: Resolvers = {
       }
 
       req.session.userId = user.id;
-      await redis.lpush(`${userSids}${user.id}`, `${redisPrefix}${req.sessionID}`);
+      await redis.lpush(`${userSidsPrefix}${user.id}`, `${redisPrefix}${req.sessionID}`);
 
       return null;
     },

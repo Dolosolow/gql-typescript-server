@@ -26,7 +26,6 @@ describe("User Query", () => {
     const testClient = new TestClient(process.env.TEST_GQL_HOST as string);
 
     const response = await testClient.user();
-
     expect(response.data.data).toEqual({ user: null });
   });
 
@@ -34,8 +33,8 @@ describe("User Query", () => {
     const testClient = new TestClient(process.env.TEST_GQL_HOST as string);
 
     await testClient.login(email, password);
-    const response = await testClient.user();
 
+    const response = await testClient.user();
     expect(response.data.data).toEqual({
       user: {
         id: userId,
