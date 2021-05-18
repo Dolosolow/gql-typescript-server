@@ -9,3 +9,7 @@ export const registrationSchema = yup.object().shape({
     .email(messages.register.invalidEmail),
   password: yup.string().min(3, messages.register.passwordNotLongEnough).max(255).required(),
 });
+
+export const passwordSchema = yup.object().shape({
+  newPassword: yup.string().min(3, messages.register.passwordNotLongEnough).max(255).required(),
+});
