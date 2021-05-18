@@ -28,7 +28,7 @@ describe("Logout User", () => {
     await session1.login(email, password);
     await session2.login(email, password);
 
-    expect(await (await session1.user()).data).toEqual(await await (await session2.user()).data);
+    expect(await await session1.user()).toEqual(await await await session2.user());
   });
 
   test("SINGLE SESSION: should destory session and log a user out", async () => {
@@ -37,7 +37,7 @@ describe("Logout User", () => {
     await testClient.login(email, password);
     const loginResponse = await testClient.user();
 
-    expect(loginResponse.data.data).toEqual({
+    expect(loginResponse).toEqual({
       user: {
         id: userId,
         email,
@@ -47,6 +47,6 @@ describe("Logout User", () => {
     await testClient.logout();
     const logoutResponse = await testClient.user();
 
-    expect(logoutResponse.data.data).toEqual({ user: null });
+    expect(logoutResponse).toEqual({ user: null });
   });
 });

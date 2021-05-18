@@ -5,6 +5,8 @@ import { messages } from "../lang";
 import { TestClient } from "../utils/TestClient";
 import { User } from "../entity/User";
 
+let connection: Connection;
+
 const email = "jochy07c@gmail.com";
 const password = "test123!";
 
@@ -16,12 +18,10 @@ const loginError = async (
 ) => {
   const loginUser = await testClient.login(email, password);
 
-  expect(loginUser.data.data).toEqual({
+  expect(loginUser).toEqual({
     login: [{ path: "email", message: errorMsg }],
   });
 };
-
-let connection: Connection;
 
 beforeAll(async () => {
   connection = await createTOConnection();
@@ -32,14 +32,17 @@ afterAll(async () => {
 });
 
 describe("Login User", () => {
+  let testClient: TestClient;
+
+  beforeEach(() => {
+    testClient = new TestClient(process.env.TEST_GQL_HOST as string);
+  });
+
   test("should return invalid credentials, no user", async () => {
-    const testClient = new TestClient(process.env.TEST_GQL_HOST as string);
     await loginError(testClient, email, password, messages.login.invalidCridentials);
   });
 
   test("should fail login user, email not confirmed + update user + login successful", async () => {
-    const testClient = new TestClient(process.env.TEST_GQL_HOST as string);
-
     await testClient.register(email, password);
     await loginError(testClient, email, password, messages.login.confirmBtn);
 
@@ -47,6 +50,6 @@ describe("Login User", () => {
     await loginError(testClient, email, "asdasdasd", messages.login.invalidCridentials);
 
     const loginSuccess = await testClient.login(email, password);
-    expect(loginSuccess.data.data).toEqual({ login: null });
+    expect(loginSuccess).toEqual({ login: null });
   });
 });

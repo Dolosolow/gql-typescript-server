@@ -20,7 +20,7 @@ export class TestClient {
   }
 
   async changeForgottenPassword(newPassword: string, key: string) {
-    return axios.post(
+    const response = await axios.post(
       this.url,
       {
         query: `
@@ -34,10 +34,12 @@ export class TestClient {
       },
       { ...this.options }
     );
+
+    return response.data.data;
   }
 
   async login(email: string, password: string) {
-    return axios.post(
+    const response = await axios.post(
       this.url,
       {
         query: `
@@ -51,10 +53,12 @@ export class TestClient {
       },
       { ...this.options }
     );
+
+    return response.data.data;
   }
 
   async logout() {
-    return axios.post(
+    const response = await axios.post(
       this.url,
       {
         query: `
@@ -65,10 +69,12 @@ export class TestClient {
       },
       { ...this.options }
     );
+
+    return response.data.data;
   }
 
   async register(email: string, password: string) {
-    return axios.post(
+    const response = await axios.post(
       this.url,
       {
         query: `
@@ -82,10 +88,12 @@ export class TestClient {
       },
       { ...this.options }
     );
+
+    return response.data.data;
   }
 
   async user() {
-    return axios.post(
+    const response = await axios.post(
       this.url,
       {
         query: `
@@ -99,5 +107,7 @@ export class TestClient {
       },
       { ...this.options }
     );
+
+    return response.data.data;
   }
 }

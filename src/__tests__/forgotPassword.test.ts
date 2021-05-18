@@ -32,7 +32,7 @@ describe("Forgot Password", () => {
     await forgotPwdLockAcct(userId, redis);
 
     const lockAcctLoginAttempt = await testClient.login(email, password);
-    expect(lockAcctLoginAttempt.data.data).toEqual({
+    expect(lockAcctLoginAttempt).toEqual({
       login: [{ path: "email", message: messages.login.AcctLock }],
     });
 
@@ -41,24 +41,24 @@ describe("Forgot Password", () => {
     const key = chunks[chunks.length - 1];
 
     const changePwdShortFail = await testClient.changeForgottenPassword("p", key);
-    expect(changePwdShortFail.data.data).toEqual({
+    expect(changePwdShortFail).toEqual({
       changeForgottenPassword: [
         { path: "newPassword", message: messages.register.passwordNotLongEnough },
       ],
     });
 
     const changePwdResponse = await testClient.changeForgottenPassword(newPassword, key);
-    expect(changePwdResponse.data.data).toEqual({ changeForgottenPassword: null });
+    expect(changePwdResponse).toEqual({ changeForgottenPassword: null });
 
     const sameKeyChangePwd = await testClient.changeForgottenPassword("againagainagain", key);
-    expect(sameKeyChangePwd.data.data).toEqual({
+    expect(sameKeyChangePwd).toEqual({
       changeForgottenPassword: [{ path: "key", message: messages.forgotPassword.expiredKey }],
     });
 
     const loginResponse = await testClient.login(email, newPassword);
-    expect(loginResponse.data.data).toEqual({ login: null });
+    expect(loginResponse).toEqual({ login: null });
 
     const userResponse = await testClient.user();
-    expect(userResponse.data.data).toEqual({ user: { id: userId, email } });
+    expect(userResponse).toEqual({ user: { id: userId, email } });
   });
 });

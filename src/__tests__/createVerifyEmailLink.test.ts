@@ -1,3 +1,4 @@
+import { Connection } from "typeorm";
 import fetch from "node-fetch";
 
 import { createTOConnection } from "../utils/createTOConnection";
@@ -6,12 +7,17 @@ import { User } from "../entity/User";
 import { redis } from "../utils/redisConfig";
 
 let userId: string;
+let connection: Connection;
 
 beforeAll(async () => {
-  await createTOConnection();
+  connection = await createTOConnection();
   const user = User.create({ email: "asiaferrer@gmail.com", password: "jochy123" });
   await user.save();
   userId = user.id;
+});
+
+afterAll(async () => {
+  await connection.close();
 });
 
 describe("ƒ: createVerifyEmailLink", () => {
