@@ -1,3 +1,3 @@
-import { AuthMiddleware } from "./addDataToContext";
+import { AuthMiddleware } from "./createMiddleware";
 
 export default [AuthMiddleware];
