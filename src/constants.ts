@@ -1,2 +1,3 @@
 export const redisPrefix = "sess:";
-export const userSids = "usids:";
+export const userSidsPrefix = "usids:";
+export const forgotPwdPrefix = "fpwd:";
