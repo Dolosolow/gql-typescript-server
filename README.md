@@ -54,6 +54,5 @@ Start the server with `yarn start` then to use GraphQL Playground navigate to `h
 * Logout  
 * Cookies
 * Authentication middleware
-* Rate limiting
 * Locking accounts
-* Testing (probably Jest)
+* Testing
