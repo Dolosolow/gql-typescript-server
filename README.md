@@ -1,22 +1,59 @@
 # TS GraphQL Server
 
-Built with<br />
-&emsp;Typeorm w/ Postgres<br />
-&emsp;Apollo-server-express<br />
-&emsp;Typescript<br />
-&emsp;Redis<br />
-&emsp;Yup for form validation<br />
-&emsp;GraphQL Code Generator for generating types for the graphql schema.<br />
+A GraphQL Server boilerplate
 
-## Prerequisites:
+## Prerequisites
 
-1. Server uses Typeorm with Postgres so if your running this on your local machine make sure to have [postgres](https://www.postgresql.org/download/) installed and running.
+- :warning:  Server uses Typeorm w/ Postgres so please make sure to have [postgres](https://www.postgresql.org/download/) installed.
 
-2. Server also uses [Redis](https://redis.io/download) so please make sure to have this installed and running aswell.
+- :warning:  Server also uses [Redis](https://redis.io/download) so please make sure to have this installed.
 
-## Steps to run this project:
+## Stack<br /> 
 
-1. Run `yarn install` command
-2. Start your redis server and postgres DB.
-3. Run `yarn test` command and make sure the tests are passing.
-4. Run `yarn start` commnad and if loggings from typeorm are visible everything is good.
+- Apollo-server-express<br />
+- GraphQL Code Generator for generating types for the graphql schema.<br />
+- Jest<br />
+- Redis<br />
+- Typeorm w/ Postgres<br />
+- Typescript<br />
+
+## Installation
+
+1. Clone git project
+```
+git clone https://github.com/Dolosolow/gql-typescript-server.git
+```
+2. CD to project
+```
+cd gql-typescript-server
+```
+3. Install dependencies
+```
+yarn install
+```
+4. Install and start Redis server, after installation run
+```
+redis-server
+```
+5. Start PostgreSQL server
+
+6. Create a new database called `gql-typescript-server`
+```
+createdb gql-typescript-server
+```
+
+## Usage
+
+Start the server with `yarn start` then to use GraphQL Playground navigate to `http://localhost:4000/graphql` .
+
+## Features
+
+* Register - Send confirmation email
+* Login
+* Forgot Password
+* Logout  
+* Cookies
+* Authentication middleware
+* Rate limiting
+* Locking accounts
+* Testing (probably Jest)
