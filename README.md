@@ -11,7 +11,7 @@ A GraphQL Server boilerplate
 ## Stack<br /> 
 
 - Apollo-server-express<br />
-- GraphQL Code Generator for generating types for the graphql schema.<br />
+- GraphQL Code Generator for generating graphql schema types.<br />
 - Jest<br />
 - Redis<br />
 - Typeorm w/ Postgres<br />
