@@ -2,6 +2,8 @@ export const messages = {
   email: {
     confirmBtn: "Confirm Email",
     confirmEmailSubject: "Welcome, you're almost done. Verify your email address",
+    resetPassword: "Reset Password",
+    resetPasswordSubject: "Click link to reset your password",
   },
   login: {
     confirmBtn: "Please confirm your email",

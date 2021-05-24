@@ -22,3 +22,22 @@ export const sendConfirmationEmail = async (recipient: string, url: string) => {
     console.log(err);
   }
 };
+
+export const sendForgotPwdEmail = async (recipient: string, url: string) => {
+  const msg = {
+    to: recipient,
+    from: "jose.munoz07c@gmail.com",
+    subject: messages.email.resetPasswordSubject,
+    html: `
+    <strong>
+      <a href="${url}">${messages.email.resetPassword}</a>
+    </strong>
+    `,
+  };
+
+  try {
+    await sgMail.send(msg);
+  } catch (err) {
+    console.log(err);
+  }
+};

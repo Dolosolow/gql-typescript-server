@@ -6,7 +6,7 @@ import { messages } from "../../lang";
 import { passwordSchema, registrationSchema } from "../../validations";
 import { Resolvers } from "../../types/schema";
 import { User } from "../../entity/User";
-import { sendConfirmationEmail } from "../../utils/sendEmail";
+import { sendConfirmationEmail, sendForgotPwdEmail } from "../../utils/sendEmail";
 import { removeAllUserSessions } from "../../utils/removeAllUserSessions";
 import { forgotPwdLockAcct } from "../../utils/forgotPwdLockAcct";
 import { createForgotPasswordLink } from "../../utils/createForgotPwdLink";
@@ -46,20 +46,24 @@ export const authResolver: Resolvers = {
 
       return null;
     },
-    sendForgotPasswordEmail: async (_, __, { redis, req }) => {
-      const { userId } = req.session;
+    sendForgotPasswordEmail: async (_, { email }, { redis }) => {
+      const user = await User.findOne({ where: { email } });
+
+      if (!user) {
+        return false;
+      }
+
       /**
        * @method forgotPwdLockAcct
        * @todo add client-side url
        */
-      await forgotPwdLockAcct(userId, redis);
-      /**
-       * @method createForgotPasswordLink
-       * @todo send email with url
-       */
-      await createForgotPasswordLink("", userId, redis);
+      await forgotPwdLockAcct(user.id!, redis);
 
-      return null;
+      const emailUrl = await createForgotPasswordLink("", user.id!, redis);
+
+      await sendForgotPwdEmail(user.email, emailUrl);
+
+      return true;
     },
     logout: async (_, __, { req: { session }, redis }) => {
       const { userId } = session;
