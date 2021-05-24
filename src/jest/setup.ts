@@ -1,4 +1,4 @@
-import { Server } from "node:http";
+import { Server } from "http";
 import { Connection } from "typeorm";
 
 import { startServer } from "../startServer";
