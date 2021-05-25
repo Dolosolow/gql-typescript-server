@@ -29,13 +29,13 @@
     "database": "gql-typescript-server",
     "synchronize": true,
     "logging": true,
-    "entities": ["src/entity/**/*.ts"],
-    "migrations": ["src/migration/**/*.ts"],
-    "subscribers": ["src/subscriber/**/*.ts"],
+    "entities": ["dist/entity/**/*.js"],
+    "migrations": ["dist/migration/**/*.js"],
+    "subscribers": ["dist/subscriber/**/*.js"],
     "cli": {
-      "entitiesDir": "src/entity",
-      "migrationsDir": "src/migration",
-      "subscribersDir": "src/subscriber"
+      "entitiesDir": "dist/entity",
+      "migrationsDir": "dist/migration",
+      "subscribersDir": "dist/subscriber"
     }
   },
   {
@@ -43,22 +43,20 @@
     "type": "postgres",
     "host": "ec2-54-160-109-68.compute-1.amazonaws.com",
     "port": 5432,
-    "username": "hknbmpiiojawag",
-    "password": "80e7bade653fa792a95673638171947a57b07ddb5c14e666f91cd0bed458c21e",
-    "database": "gql-typescript-server-test",
+    "database": "gql-typescript-server",
     "synchronize": false,
     "logging": false,
     "dropSchema": false,
     "extra": {
       "ssl": true
     },
-    "entities": ["src/entity/**/*.ts"],
-    "migrations": ["src/migration/**/*.ts"],
-    "subscribers": ["src/subscriber/**/*.ts"],
+    "entities": ["dist/entity/**/*.js"],
+    "migrations": ["dist/migration/**/*.js"],
+    "subscribers": ["dist/subscriber/**/*.js"],
     "cli": {
-      "entitiesDir": "src/entity",
-      "migrationsDir": "src/migration",
-      "subscribersDir": "src/subscriber"
+      "entitiesDir": "dist/entity",
+      "migrationsDir": "dist/migration",
+      "subscribersDir": "dist/subscriber"
     }
   }
 ]
