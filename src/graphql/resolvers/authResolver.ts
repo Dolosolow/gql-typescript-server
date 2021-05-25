@@ -15,8 +15,8 @@ import { forgotPwdPrefix, redisPrefix, userSidsPrefix } from "../../constants";
 
 export const authResolver: Resolvers = {
   Query: {
-    user: async (_, __, { req: { session } }) => {
-      const user = await User.findOne({ where: { id: session.userId } });
+    user: async (_, __, { req }) => {
+      const user = await User.findOne({ where: { id: req.session.userId } });
       return user!;
     },
   },
@@ -53,10 +53,6 @@ export const authResolver: Resolvers = {
         return false;
       }
 
-      /**
-       * @method forgotPwdLockAcct
-       * @todo add client-side url
-       */
       await forgotPwdLockAcct(user.id!, redis);
 
       const emailUrl = await createForgotPasswordLink("", user.id!, redis);
@@ -93,8 +89,11 @@ export const authResolver: Resolvers = {
         return [{ path: "email", message: messages.login.invalidCridentials }];
       }
 
-      req.session.userId = user.id;
-      await redis.lpush(`${userSidsPrefix}${user.id}`, `${redisPrefix}${req.sessionID}`);
+      if (!req.session.userId) {
+        req.session.userId = user.id;
+        req.session.save();
+        await redis.lpush(`${userSidsPrefix}${user.id}`, `${redisPrefix}${req.sessionID}`);
+      }
 
       return null;
     },

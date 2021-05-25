@@ -36,23 +36,31 @@ export const startServer = async () => {
 
   const cors = {
     credentials: true,
-    origin:  "*",
+    origin: process.env.NODE_ENV === "test" ? "*" : process.env.CLIENT_HOST,
   };
 
+  app.set("trust proxy", 1);
   app.use(
     session({
       store: new RedisStore({ client: redis, prefix: redisPrefix }),
-      name: "qid",
+      name: "sid",
       secret: process.env.SESSION_SECRET as string,
-      resave: false,
+      resave: true,
       saveUninitialized: false,
       cookie: {
+        sameSite: "none",
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 1000 * 60 * 60 * 24 * 7,
+        secure: true,
+        maxAge: 1000 * 60 * 60 * 24 * 6,
       },
     })
   );
+
+  app.use(function (_, res, next) {
+    res.header("Access-Control-Allow-Origin", process.env.CLIENT_HOST);
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  });
 
   app.use("/", restRoutes);
 
@@ -60,7 +68,11 @@ export const startServer = async () => {
 
   const listener = app.listen({ port: process.env.PORT || 4000 }, () => {
     console.log(
-      `🚀  Server ready at http://localhost:${process.env.PORT || 4000}${server.graphqlPath}`
+      `🚀  Server ready at ${
+        process.env.NODE_ENV === "production"
+          ? `https://basic-auth-graphql-server.herokuapp.com/graphql`
+          : `http://localhost:${process.env.PORT || 4000}${server.graphqlPath}`
+      }`
     );
   });
 
