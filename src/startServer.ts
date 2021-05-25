@@ -36,7 +36,7 @@ export const startServer = async () => {
 
   const cors = {
     credentials: true,
-    origin: process.env.NODE_ENV === "test" ? "*" : process.env.CLIENT_HOST,
+    origin:  "*",
   };
 
   app.use(
