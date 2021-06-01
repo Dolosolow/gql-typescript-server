@@ -41,11 +41,6 @@
   {
     "name": "production",
     "type": "postgres",
-    "host": "ec2-54-160-109-68.compute-1.amazonaws.com",
-    "port": 5432,
-    "database": "d6c4n57r89tmr6",
-    "username": "hknbmpiiojawag",
-    "password": "80e7bade653fa792a95673638171947a57b07ddb5c14e666f91cd0bed458c21e",
     "synchronize": true,
     "logging": true,
     "dropSchema": false,
